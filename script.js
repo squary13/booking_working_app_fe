@@ -22,7 +22,6 @@ window.addEventListener("DOMContentLoaded", async () => {
       const res = await fetch(`${API_URL}/api/users/${userId}`);
       const user = await res.json();
       if (!user || user.error) {
-        console.log("📤 Создаём пользователя:", { telegram_id: userId, name, phone });
         const createRes = await fetch(`${API_URL}/api/users`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -36,20 +35,16 @@ window.addEventListener("DOMContentLoaded", async () => {
         const result = await createRes.json();
         if (createRes.status === 201) {
           status.textContent = "✅ Пользователь создан!";
-          console.log("✅ Пользователь создан:", result);
         } else {
           status.textContent = `⚠️ Ошибка создания: ${result.error || "Неизвестно"}`;
-          console.warn("⚠️ Ошибка создания пользователя:", result.error);
         }
       } else {
         status.textContent = "✅ Пользователь найден!";
-        console.log("✅ Пользователь найден:", user.name);
         nameInput.value = user.name;
         phoneInput.value = user.phone;
       }
     } catch (err) {
       status.textContent = "❌ Ошибка проверки пользователя";
-      console.error("❌ Ошибка при проверке пользователя:", err);
     }
   }
 
@@ -63,32 +58,10 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  async function loadSlots(date) {
-    timeSelect.innerHTML = "";
-    status.textContent = "⏳ Загружаем слоты...";
-    try {
-      const res = await fetch(`${API_URL}/api/slots?date=${date}`);
-      const data = await res.json();
-      if (!data.available?.length) {
-        status.textContent = "⚠️ Нет доступных слотов";
-        return;
-      }
-      data.available.forEach(slot => {
-        const option = document.createElement("option");
-        option.value = slot;
-        option.textContent = slot;
-        timeSelect.appendChild(option);
-      });
-      status.textContent = "✅ Слоты загружены";
-    } catch {
-      status.textContent = "❌ Ошибка загрузки слотов";
-    }
-  }
-
   async function loadBookings(userId) {
     records.innerHTML = "";
     try {
-      const res = await fetch(`${API_URL}/api/bookings?user_id=${userId}`);
+      const res = await fetch(`${API_URL}/api/bookings/by-user/${userId}`);
       const data = await res.json();
       if (!Array.isArray(data)) {
         records.textContent = `⚠️ ${data.error || "Ошибка загрузки"}`;
@@ -123,7 +96,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         body: JSON.stringify(payload)
       });
       const result = await res.json();
-      if (res.status === 201) {
+      if (res.status === 201 || result.ok) {
         status.textContent = "✅ Вы успешно записаны!";
         loadBookings(userId);
       } else {
@@ -139,14 +112,17 @@ window.addEventListener("DOMContentLoaded", async () => {
   flatpickr("#date", {
     dateFormat: "Y-m-d",
     enable: availableDates,
-    defaultDate: new Date(),
-    onChange: ([selectedDate]) => {
-      loadSlots(selectedDate.toISOString().split("T")[0]);
-    }
+    defaultDate: new Date()
   });
 
-  const today = new Date().toISOString().split("T")[0];
-  loadSlots(today);
+  // Заполняем фиксированные слоты
+  const defaultTimes = ["10:00", "11:00", "12:00", "14:00", "15:00", "16:00"];
+  defaultTimes.forEach(t => {
+    const option = document.createElement("option");
+    option.value = t;
+    option.textContent = t;
+    timeSelect.appendChild(option);
+  });
 
   if (userId) {
     await ensureUserExists(userId, nameInput.value, phoneInput.value);
@@ -155,7 +131,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     status.textContent = "⚠️ Не удалось определить пользователя";
   }
 
-  // Автофокус на первом пустом поле
   if (!nameInput.value) nameInput.focus();
   else if (!phoneInput.value) phoneInput.focus();
 });

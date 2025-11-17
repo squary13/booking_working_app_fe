@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Запись на прием</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -10,19 +11,21 @@
   <div class="container">
     <h2 id="welcomeText">👋 Привет, Гость!</h2>
 
-    <label for="date">Дата</label>
-    <input type="text" id="date">
+    <form id="bookingForm">
+      <label for="date">Дата</label>
+      <input type="text" id="date" required>
 
-    <label for="timeSelect">Время</label>
-    <select id="timeSelect"></select>
+      <label for="timeSelect">Время</label>
+      <select id="timeSelect" required></select>
 
-    <label for="nameInput">Имя</label>
-    <input type="text" id="nameInput">
+      <label for="nameInput">Имя</label>
+      <input type="text" id="nameInput" required>
 
-    <label for="phoneInput">Телефон</label>
-    <input type="text" id="phoneInput">
+      <label for="phoneInput">Телефон</label>
+      <input type="tel" id="phoneInput" required>
 
-    <button id="submitBtn">Записаться</button>
+      <button type="button" id="submitBtn">Записаться</button>
+    </form>
 
     <div class="status" id="status"></div>
     <div class="records" id="records"></div>

@@ -1,8 +1,9 @@
 const API_URL = "https://booking-fe.squary50.workers.dev";
 
 window.addEventListener("DOMContentLoaded", async () => {
+  const userTable = document.getElementById("userTable");
   const status = document.getElementById("status");
-  const userList = document.getElementById("userList");
+  const generateBtn = document.getElementById("generateSlots");
 
   async function loadUsers() {
     status.textContent = "⏳ Загружаем пользователей...";
@@ -13,38 +14,53 @@ window.addEventListener("DOMContentLoaded", async () => {
         status.textContent = `⚠️ ${users.error || "Ошибка загрузки"}`;
         return;
       }
-      status.textContent = `✅ Найдено пользователей: ${users.length}`;
-      userList.innerHTML = users.map(user => `
-        <div class="user-card">
-          <strong>${user.name}</strong> (${user.role})<br>
-          📱 ${user.phone}<br>
-          🆔 ${user.telegram_id}<br>
-          🗓️ ${user.created_at}
-        </div>
-      `).join("");
+
+      userTable.innerHTML = `
+        <tr>
+          <th>ID</th>
+          <th>Telegram</th>
+          <th>Имя</th>
+          <th>Телефон</th>
+          <th>Роль</th>
+          <th>Создан</th>
+        </tr>
+      `;
+
+      users.forEach(u => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${u.id}</td>
+          <td>${u.telegram_id}</td>
+          <td>${u.name}</td>
+          <td>${u.phone}</td>
+          <td>${u.role}</td>
+          <td>${u.created_at}</td>
+        `;
+        userTable.appendChild(row);
+      });
+
+      status.textContent = `✅ Загружено ${users.length} пользователей`;
     } catch (err) {
       status.textContent = "❌ Ошибка соединения с API";
-      console.error("Ошибка загрузки пользователей:", err);
     }
   }
 
-  window.generateSlots = async function () {
+  generateBtn.onclick = async () => {
     status.textContent = "⏳ Генерация слотов...";
     try {
-      const res = await fetch(`${API_URL}/api/generate-slots`, { method: "POST" });
+      const res = await fetch(`${API_URL}/api/generate-slots`, {
+        method: "POST"
+      });
       const result = await res.json();
       if (result.ok) {
-        status.textContent = `✅ Слоты созданы: ${result.generated}`;
-        alert(`Слоты созданы: ${result.generated}`);
+        status.textContent = `✅ Сгенерировано ${result.generated} слотов`;
       } else {
-        status.textContent = `⚠️ Ошибка: ${result.error || "Неизвестно"}`;
-        alert(`Ошибка: ${result.error || "Неизвестно"}`);
+        status.textContent = `⚠️ ${result.error || "Ошибка генерации"}`;
       }
-    } catch (err) {
+    } catch {
       status.textContent = "❌ Ошибка генерации";
-      alert("Ошибка соединения с API");
     }
   };
 
-  await loadUsers();
+  loadUsers();
 });
