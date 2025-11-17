@@ -1,4 +1,4 @@
-const API_URL = "https://booking-fe.squary50.workers.dev";
+const API_URL = "https://booking-worker-py-be.workers.dev";
 
 window.addEventListener("DOMContentLoaded", async () => {
   const dateInput = document.getElementById("date");
