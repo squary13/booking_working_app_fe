@@ -1,4 +1,4 @@
-const API_URL = "https://booking-worker-py-be.squary50.workers.dev/api";
+const API_URL = "https://booking-worker-py-be.squary50.workers.dev";
 
 window.addEventListener("DOMContentLoaded", async () => {
   const userTable = document.getElementById("userTable");

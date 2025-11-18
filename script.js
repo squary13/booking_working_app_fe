@@ -1,10 +1,10 @@
-const API_URL = "https://booking-worker-py-be.squary50.workers.dev/api";
+const API_URL = "https://booking-worker-py-be.squary50.workers.dev";
 
 window.addEventListener("DOMContentLoaded", async () => {
   const dateInput = document.getElementById("date");
   const timeSelect = document.getElementById("timeSelect");
   const nameInput = document.getElementById("nameInput");
-  const phoneInput = document.getElementById("phoneInput");
+  const phoneInput = document.getElementById("phoneInput");80 
   const status = document.getElementById("status");
   const records = document.getElementById("records");
 
