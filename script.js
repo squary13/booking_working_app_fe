@@ -107,7 +107,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       const result = await res.json();
       if (res.status === 201 || result.ok) {
         status.textContent = "✅ Вы успешно записаны!";
-        loadBookings(userId);
+        loadBookings(telegramId);
       } else {
         status.textContent = `⚠️ ${result.error || "Ошибка записи"}`;
       }
