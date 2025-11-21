@@ -96,6 +96,34 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  async function loadAvailableTimes(date) {
+    timeSelect.innerHTML = "";
+    try {
+      const res = await fetch(`${API_URL}/api/bookings/by-user/1000`);
+      const allSlots = await res.json();
+      const filtered = allSlots.filter(slot => slot.date === date);
+      if (filtered.length === 0) {
+        const option = document.createElement("option");
+        option.textContent = "Нет доступных слотов";
+        option.disabled = true;
+        timeSelect.appendChild(option);
+        return;
+      }
+
+      filtered.forEach(slot => {
+        const option = document.createElement("option");
+        option.value = slot.time;
+        option.textContent = slot.time;
+        timeSelect.appendChild(option);
+      });
+    } catch {
+      const option = document.createElement("option");
+      option.textContent = "Ошибка загрузки слотов";
+      option.disabled = true;
+      timeSelect.appendChild(option);
+    }
+  }
+
   submitBtn.onclick = async () => {
     const payload = {
       user_id: userId,
@@ -120,11 +148,12 @@ window.addEventListener("DOMContentLoaded", async () => {
         body: JSON.stringify(payload)
       });
       const result = await res.json();
-      if (res.status === 201 || result.ok) {
+      if (res.status === 201 || result.ok || result.id) {
         status.textContent = "✅ Вы успешно записаны!";
         dateInput.value = "";
         timeSelect.value = "";
         loadBookings(telegramId);
+        loadAvailableTimes(payload.date); // обновить слоты
       } else {
         status.textContent = `⚠️ ${result.error || "Ошибка записи"}`;
       }
@@ -138,7 +167,12 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   refreshBtn.onclick = () => {
     loadBookings(telegramId);
+    if (dateInput.value) loadAvailableTimes(dateInput.value);
   };
+
+  dateInput.addEventListener("change", () => {
+    if (dateInput.value) loadAvailableTimes(dateInput.value);
+  });
 
   const availableDates = await fetchAvailableDates();
 
@@ -148,17 +182,12 @@ window.addEventListener("DOMContentLoaded", async () => {
     defaultDate: new Date()
   });
 
-  const defaultTimes = ["10:00", "11:00", "12:00", "14:00", "15:00", "16:00"];
-  defaultTimes.forEach(t => {
-    const option = document.createElement("option");
-    option.value = t;
-    option.textContent = t;
-    timeSelect.appendChild(option);
-  });
-
   if (telegramId) {
     userId = await ensureUserExists(telegramId, nameInput.value, phoneInput.value);
-    if (userId) loadBookings(telegramId);
+    if (userId) {
+      loadBookings(telegramId);
+      if (dateInput.value) loadAvailableTimes(dateInput.value);
+    }
   } else {
     status.textContent = "⚠️ Не удалось определить пользователя";
   }
