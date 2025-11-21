@@ -34,27 +34,30 @@
   </div>
 
   <!-- Админ-панель (только для админа) -->
-  <div class="admin-panel" id="adminPanel" style="display: none;">
-    <h3>🛠 Панель администратора</h3>
+  <div id="adminPanel" class="admin-panel" style="display: none;">
+  <h3>🛠 Панель администратора</h3>
 
-    <section>
-      <h4>📅 Рабочие дни</h4>
-      <input type="text" id="workDaysPicker" placeholder="Выберите рабочие дни">
-      <button type="button" id="saveWorkDaysBtn">💾 Сохранить</button>
-    </section>
+  <section>
+    <h4>📅 Рабочие дни</h4>
+    <label for="workDaysPicker">Выберите рабочие дни:</label>
+    <input type="text" id="workDaysPicker" placeholder="Выберите даты">
+    <button id="saveWorkDaysBtn">💾 Сохранить рабочие дни</button>
+  </section>
 
-    <section>
-      <h4>⏰ Слоты на выбранный день</h4>
-      <input type="text" id="slotDatePicker" placeholder="Дата для слотов">
-      <button type="button" id="generateSlotsBtn">➕ Создать слоты</button>
-    </section>
+  <section>
+    <h4>🧩 Генерация слотов</h4>
+    <label for="slotDatePicker">Дата для генерации слотов:</label>
+    <input type="text" id="slotDatePicker" placeholder="Выберите дату">
+    <button id="generateSlotsBtn">⚙️ Создать слоты</button>
+  </section>
 
-    <section>
-      <h4>👥 Записи пользователей</h4>
-      <div id="adminRecords"></div>
-      <button type="button" id="refreshAdminRecordsBtn">🔄 Обновить</button>
-    </section>
-  </div>
+  <section>
+    <h4>📘 Записи на сегодня</h4>
+    <button id="refreshAdminRecordsBtn">🔄 Обновить записи</button>
+    <div id="adminRecords">ℹ️ Записи не загружены</div>
+  </section>
+</div>
+
 
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="script.js"></script>
