@@ -11,9 +11,9 @@ window.addEventListener("DOMContentLoaded", async () => {
   const submitBtn = document.getElementById("submitBtn");
 
   const urlParams = new URLSearchParams(window.location.search);
-  const name = urlParams.get("name") || "";
+  const name = decodeURIComponent(urlParams.get("name") || "");
   const telegramIdRaw = urlParams.get("user_id");
-  const telegramId = telegramIdRaw && !isNaN(parseInt(telegramIdRaw, 10)) ? parseInt(telegramIdRaw, 10) : null;
+  const telegramId = telegramIdRaw && /^\d+$/.test(telegramIdRaw) ? parseInt(telegramIdRaw, 10) : null;
 
   nameInput.value = name;
   document.getElementById("welcomeText").textContent = `👋 Привет, ${name || "Гость"}!`;
@@ -21,6 +21,11 @@ window.addEventListener("DOMContentLoaded", async () => {
   let userId = null;
 
   async function ensureUserExists(telegramId, name, phone) {
+    if (!telegramId) {
+      status.textContent = "⚠️ Не передан Telegram ID";
+      return null;
+    }
+
     status.textContent = "⏳ Проверка пользователя...";
     try {
       const res = await fetch(`${API_URL}/api/users?telegram_id=${telegramId}`);
@@ -44,7 +49,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         })
       });
       const result = await createRes.json();
-      if (createRes.status === 201 || createRes.status === 200) {
+      if (createRes.ok && result.id) {
         status.textContent = "✅ Пользователь создан!";
         nameInput.value = result.name;
         phoneInput.value = result.phone;
@@ -71,6 +76,11 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   async function loadBookings(telegramId) {
     records.innerHTML = "";
+    if (!telegramId) {
+      records.textContent = "⚠️ Неизвестный Telegram ID";
+      return;
+    }
+
     try {
       const res = await fetch(`${API_URL}/api/bookings/by-user/${telegramId}`);
       const data = await res.json();
@@ -127,7 +137,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   };
 
   refreshBtn.onclick = () => {
-    if (telegramId) loadBookings(telegramId);
+    loadBookings(telegramId);
   };
 
   const availableDates = await fetchAvailableDates();
