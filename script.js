@@ -17,36 +17,43 @@ window.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("welcomeText").textContent = `👋 Привет, ${name || "Гость"}!`;
 
   async function ensureUserExists(userId, name, phone) {
-    status.textContent = "⏳ Проверка пользователя...";
-    try {
-      const res = await fetch(`${API_URL}/api/users/${userId}`);
-      const user = await res.json();
-      if (!user || user.error) {
-        const createRes = await fetch(`${API_URL}/api/users`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            telegram_id: userId,
-            name: name || "Без имени",
-            phone: phone || "00000000",
-            role: "user"
-          })
-        });
-        const result = await createRes.json();
-        if (createRes.status === 201) {
-          status.textContent = "✅ Пользователь создан!";
-        } else {
-          status.textContent = `⚠️ Ошибка создания: ${result.error || "Неизвестно"}`;
-        }
+  status.textContent = "⏳ Проверка пользователя...";
+  try {
+    const res = await fetch(`${API_URL}/api/users/${userId}`);
+    const user = await res.json();
+    if (!user || user.error) {
+      const createRes = await fetch(`${API_URL}/api/users`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          telegram_id: userId,
+          name: name || "Без имени",
+          phone: phone || "00000000",
+          role: "user"
+        })
+      });
+      const result = await createRes.json();
+      if (createRes.status === 201 || createRes.status === 200) {
+        status.textContent = "✅ Пользователь создан!";
+        nameInput.value = result.name;
+        phoneInput.value = result.phone;
+        return result.id;
       } else {
-        status.textContent = "✅ Пользователь найден!";
-        nameInput.value = user.name;
-        phoneInput.value = user.phone;
+        status.textContent = `⚠️ Ошибка создания: ${result.error || "Неизвестно"}`;
+        return null;
       }
-    } catch (err) {
-      status.textContent = "❌ Ошибка проверки пользователя";
+    } else {
+      status.textContent = "✅ Пользователь найден!";
+      nameInput.value = user.name;
+      phoneInput.value = user.phone;
+      return user.id;
     }
+  } catch (err) {
+    status.textContent = "❌ Ошибка проверки пользователя";
+    return null;
   }
+}
+
 
   async function fetchAvailableDates() {
     try {
