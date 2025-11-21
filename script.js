@@ -67,7 +67,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  async function loadBookings(userId) {
+  async function loadBookings(telegramId) {
     records.innerHTML = "";
     try {
       const res = await fetch(`${API_URL}/api/bookings/by-user/${telegramId}`);
@@ -134,7 +134,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   if (telegramId) {
     userId = await ensureUserExists(telegramId, nameInput.value, phoneInput.value);
-    if (userId) loadBookings(userId);
+    if (userId) loadBookings(telegramId);
   } else {
     status.textContent = "⚠️ Не удалось определить пользователя";
   }
