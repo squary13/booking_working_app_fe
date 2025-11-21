@@ -3,6 +3,7 @@ body {
   color: #fff;
   font-family: sans-serif;
   padding: 20px;
+  margin: 0;
 }
 
 .container {
@@ -12,6 +13,33 @@ body {
   background-color: #2a2a2a;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.admin-panel {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #2f2f2f;
+  border: 1px solid #444;
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+}
+
+.admin-panel h3 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  text-align: center;
+  color: #ffd700;
+}
+
+.admin-panel section {
+  margin-top: 25px;
+}
+
+.admin-panel h4 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #ccc;
 }
 
 h2 {
@@ -30,7 +58,6 @@ input, select {
   padding: 10px;
   font-size: 16px;
   width: 100%;
-  max-width: 100%;
   border: 1px solid #444;
   border-radius: 6px;
   background-color: #1e1e1e;
@@ -55,9 +82,69 @@ button:hover {
   background-color: #555;
 }
 
-.status, .records {
+.status, .records, #adminRecords {
   margin-top: 20px;
   font-size: 15px;
   color: #ccc;
   line-height: 1.6;
+}
+
+.deleteBtn, .adminDeleteBtn {
+  margin-left: 10px;
+  padding: 4px 8px;
+  font-size: 14px;
+  background-color: #5a1e1e;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.deleteBtn:hover, .adminDeleteBtn:hover {
+  background-color: #7a2e2e;
+}
+
+input[type="text"]::placeholder {
+  color: #888;
+}
+
+.flatpickr-calendar {
+  background-color: #2a2a2a !important;
+  color: white !important;
+  border: 1px solid #444 !important;
+}
+
+.flatpickr-day.selected {
+  background-color: #555 !important;
+  border-color: #777 !important;
+}
+
+.flatpickr-day.today {
+  border-color: #ffd700 !important;
+}
+
+/* 📱 Мобильная адаптация */
+@media screen and (max-width: 480px) {
+  body {
+    padding: 10px;
+  }
+
+  .container, .admin-panel {
+    padding: 15px;
+    margin: 10px auto;
+    border-radius: 8px;
+  }
+
+  h2, .admin-panel h3 {
+    font-size: 18px;
+  }
+
+  label, input, select, button {
+    font-size: 15px;
+  }
+
+  .deleteBtn, .adminDeleteBtn {
+    font-size: 13px;
+    padding: 3px 6px;
+  }
 }

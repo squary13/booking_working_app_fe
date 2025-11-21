@@ -1,4 +1,5 @@
 const API_URL = "https://booking-worker-py-be.squary50.workers.dev";
+const ADMIN_TELEGRAM_ID = 668191091;
 
 window.addEventListener("DOMContentLoaded", async () => {
   const dateInput = document.getElementById("date");
@@ -58,8 +59,8 @@ window.addEventListener("DOMContentLoaded", async () => {
         status.textContent = `⚠️ Ошибка создания: ${result.error || "Неизвестно"}`;
         return null;
       }
-    } catch (err) {
-      status.textContent = "❌ Ошибка проверки пользователя";
+    } catch {
+      status.textContent = "❌ Ошибка соединения с API";
       return null;
     }
   }
@@ -96,7 +97,6 @@ window.addEventListener("DOMContentLoaded", async () => {
           `).join("<br>")
         : "ℹ️ У вас нет записей";
 
-      // обработчики кнопок удаления
       document.querySelectorAll(".deleteBtn").forEach(btn => {
         btn.onclick = async () => {
           const bookingId = btn.getAttribute("data-id");
@@ -109,13 +109,12 @@ window.addEventListener("DOMContentLoaded", async () => {
             const res = await fetch(`${API_URL}/api/bookings/${bookingId}`, {
               method: "DELETE"
             });
-            const result = await res.json();
             if (res.ok) {
               status.textContent = "✅ Запись удалена!";
               loadBookings(telegramId);
               if (dateInput.value) loadAvailableTimes(dateInput.value);
             } else {
-              status.textContent = `⚠️ Ошибка удаления: ${result.error || "Неизвестно"}`;
+              status.textContent = "⚠️ Ошибка удаления";
             }
           } catch {
             status.textContent = "❌ Ошибка соединения";
@@ -130,9 +129,9 @@ window.addEventListener("DOMContentLoaded", async () => {
   async function loadAvailableTimes(date) {
     timeSelect.innerHTML = "";
     try {
-      const res = await fetch(`${API_URL}/api/bookings/by-user/1000`);
+      const res = await fetch(`${API_URL}/api/bookings/by-user/${ADMIN_TELEGRAM_ID}`);
       const allSlots = await res.json();
-      const filtered = allSlots.filter(slot => slot.date === date && String(slot.user_id) === "6");
+      const filtered = allSlots.filter(slot => slot.date === date);
 
       if (filtered.length === 0) {
         const option = document.createElement("option");
@@ -142,10 +141,11 @@ window.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      filtered.forEach(slot => {
+      const uniqueTimes = [...new Set(filtered.map(slot => slot.time))];
+      uniqueTimes.forEach(time => {
         const option = document.createElement("option");
-        option.value = slot.time;
-        option.textContent = slot.time;
+        option.value = time;
+        option.textContent = time;
         timeSelect.appendChild(option);
       });
     } catch {
@@ -180,7 +180,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         body: JSON.stringify(payload)
       });
       const result = await res.json();
-      if (res.status === 201 || result.ok || result.id) {
+      if (res.status === 201 || result.id) {
         status.textContent = "✅ Вы успешно записаны!";
         dateInput.value = "";
         timeSelect.value = "";

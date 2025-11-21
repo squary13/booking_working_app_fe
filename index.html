@@ -33,6 +33,29 @@
     <button type="button" id="refreshBtn">🔄 Обновить записи</button>
   </div>
 
+  <!-- Админ-панель (только для админа) -->
+  <div class="admin-panel" id="adminPanel" style="display: none;">
+    <h3>🛠 Панель администратора</h3>
+
+    <section>
+      <h4>📅 Рабочие дни</h4>
+      <input type="text" id="workDaysPicker" placeholder="Выберите рабочие дни">
+      <button type="button" id="saveWorkDaysBtn">💾 Сохранить</button>
+    </section>
+
+    <section>
+      <h4>⏰ Слоты на выбранный день</h4>
+      <input type="text" id="slotDatePicker" placeholder="Дата для слотов">
+      <button type="button" id="generateSlotsBtn">➕ Создать слоты</button>
+    </section>
+
+    <section>
+      <h4>👥 Записи пользователей</h4>
+      <div id="adminRecords"></div>
+      <button type="button" id="refreshAdminRecordsBtn">🔄 Обновить</button>
+    </section>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="script.js"></script>
 </body>
