@@ -88,46 +88,73 @@ window.addEventListener("DOMContentLoaded", async () => {
         records.textContent = `⚠️ ${data.error || "Ошибка загрузки"}`;
         return;
       }
+
       records.innerHTML = data.length
-        ? data.map(r => `📅 ${r.date} в ${r.time}`).join("<br>")
+        ? data.map(r => `
+            📅 ${r.date} в ${r.time}
+            <button data-id="${r.id}" class="deleteBtn">❌ Удалить</button>
+          `).join("<br>")
         : "ℹ️ У вас нет записей";
+
+      // обработчики кнопок удаления
+      document.querySelectorAll(".deleteBtn").forEach(btn => {
+        btn.onclick = async () => {
+          const bookingId = btn.getAttribute("data-id");
+          if (!bookingId) return;
+
+          btn.disabled = true;
+          btn.textContent = "⏳ Удаление...";
+
+          try {
+            const res = await fetch(`${API_URL}/api/bookings/${bookingId}`, {
+              method: "DELETE"
+            });
+            const result = await res.json();
+            if (res.ok) {
+              status.textContent = "✅ Запись удалена!";
+              loadBookings(telegramId);
+              if (dateInput.value) loadAvailableTimes(dateInput.value);
+            } else {
+              status.textContent = `⚠️ Ошибка удаления: ${result.error || "Неизвестно"}`;
+            }
+          } catch {
+            status.textContent = "❌ Ошибка соединения";
+          }
+        };
+      });
     } catch {
       records.textContent = "❌ Ошибка соединения с API";
     }
   }
 
   async function loadAvailableTimes(date) {
-  timeSelect.innerHTML = "";
+    timeSelect.innerHTML = "";
+    try {
+      const res = await fetch(`${API_URL}/api/bookings/by-user/1000`);
+      const allSlots = await res.json();
+      const filtered = allSlots.filter(slot => slot.date === date && String(slot.user_id) === "6");
 
-  try {
-    const res = await fetch(`${API_URL}/api/bookings/by-user/1000`);
-    const allSlots = await res.json();
+      if (filtered.length === 0) {
+        const option = document.createElement("option");
+        option.textContent = "Нет доступных слотов";
+        option.disabled = true;
+        timeSelect.appendChild(option);
+        return;
+      }
 
-    // Показываем только слоты на выбранную дату, которые всё ещё принадлежат админу
-    const filtered = allSlots.filter(slot => slot.date === date && String(slot.user_id) === "6");
-
-    if (filtered.length === 0) {
+      filtered.forEach(slot => {
+        const option = document.createElement("option");
+        option.value = slot.time;
+        option.textContent = slot.time;
+        timeSelect.appendChild(option);
+      });
+    } catch {
       const option = document.createElement("option");
-      option.textContent = "Нет доступных слотов";
+      option.textContent = "Ошибка загрузки слотов";
       option.disabled = true;
       timeSelect.appendChild(option);
-      return;
     }
-
-    filtered.forEach(slot => {
-      const option = document.createElement("option");
-      option.value = slot.time;
-      option.textContent = slot.time;
-      timeSelect.appendChild(option);
-    });
-  } catch {
-    const option = document.createElement("option");
-    option.textContent = "Ошибка загрузки слотов";
-    option.disabled = true;
-    timeSelect.appendChild(option);
   }
-}
-
 
   submitBtn.onclick = async () => {
     const payload = {
@@ -158,7 +185,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         dateInput.value = "";
         timeSelect.value = "";
         loadBookings(telegramId);
-        loadAvailableTimes(payload.date); // обновить слоты
+        loadAvailableTimes(payload.date);
       } else {
         status.textContent = `⚠️ ${result.error || "Ошибка записи"}`;
       }
