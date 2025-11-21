@@ -7,6 +7,8 @@ window.addEventListener("DOMContentLoaded", async () => {
   const phoneInput = document.getElementById("phoneInput");
   const status = document.getElementById("status");
   const records = document.getElementById("records");
+  const refreshBtn = document.getElementById("refreshBtn");
+  const submitBtn = document.getElementById("submitBtn");
 
   const urlParams = new URLSearchParams(window.location.search);
   const name = urlParams.get("name") || "";
@@ -84,7 +86,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  document.getElementById("submitBtn").onclick = async () => {
+  submitBtn.onclick = async () => {
     const payload = {
       user_id: userId,
       date: dateInput.value,
@@ -98,6 +100,9 @@ window.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
+    submitBtn.disabled = true;
+    submitBtn.textContent = "⏳ Отправка...";
+
     try {
       const res = await fetch(`${API_URL}/api/bookings`, {
         method: "POST",
@@ -107,13 +112,22 @@ window.addEventListener("DOMContentLoaded", async () => {
       const result = await res.json();
       if (res.status === 201 || result.ok) {
         status.textContent = "✅ Вы успешно записаны!";
+        dateInput.value = "";
+        timeSelect.value = "";
         loadBookings(telegramId);
       } else {
         status.textContent = `⚠️ ${result.error || "Ошибка записи"}`;
       }
     } catch {
       status.textContent = "❌ Ошибка отправки";
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Записаться";
     }
+  };
+
+  refreshBtn.onclick = () => {
+    if (telegramId) loadBookings(telegramId);
   };
 
   const availableDates = await fetchAvailableDates();
