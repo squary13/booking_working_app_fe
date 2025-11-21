@@ -104,7 +104,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     const allSlots = await res.json();
 
     // Показываем только слоты на выбранную дату, которые всё ещё принадлежат админу
-    const filtered = allSlots.filter(slot => slot.date === date && slot.user_id === 6);
+    const filtered = allSlots.filter(slot => slot.date === date && String(slot.user_id) === "6");
 
     if (filtered.length === 0) {
       const option = document.createElement("option");
