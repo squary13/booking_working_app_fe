@@ -4,29 +4,38 @@ window.addEventListener("DOMContentLoaded", async () => {
   const dateInput = document.getElementById("date");
   const timeSelect = document.getElementById("timeSelect");
   const nameInput = document.getElementById("nameInput");
-  const phoneInput = document.getElementById("phoneInput");80 
+  const phoneInput = document.getElementById("phoneInput");
   const status = document.getElementById("status");
   const records = document.getElementById("records");
 
   const urlParams = new URLSearchParams(window.location.search);
   const name = urlParams.get("name") || "";
-  const userIdRaw = urlParams.get("user_id");
-  const userId = userIdRaw && !isNaN(parseInt(userIdRaw, 10)) ? parseInt(userIdRaw, 10) : null;
+  const telegramIdRaw = urlParams.get("user_id");
+  const telegramId = telegramIdRaw && !isNaN(parseInt(telegramIdRaw, 10)) ? parseInt(telegramIdRaw, 10) : null;
 
   nameInput.value = name;
   document.getElementById("welcomeText").textContent = `👋 Привет, ${name || "Гость"}!`;
 
-  async function ensureUserExists(userId, name, phone) {
-  status.textContent = "⏳ Проверка пользователя...";
-  try {
-    const res = await fetch(`${API_URL}/api/users/${userId}`);
-    const user = await res.json();
-    if (!user || user.error) {
+  let userId = null;
+
+  async function ensureUserExists(telegramId, name, phone) {
+    status.textContent = "⏳ Проверка пользователя...";
+    try {
+      const res = await fetch(`${API_URL}/api/users?telegram_id=${telegramId}`);
+      const users = await res.json();
+      if (Array.isArray(users) && users.length > 0) {
+        const user = users[0];
+        status.textContent = "✅ Пользователь найден!";
+        nameInput.value = user.name;
+        phoneInput.value = user.phone;
+        return user.id;
+      }
+
       const createRes = await fetch(`${API_URL}/api/users`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          telegram_id: userId,
+          telegram_id: telegramId,
           name: name || "Без имени",
           phone: phone || "00000000",
           role: "user"
@@ -42,18 +51,11 @@ window.addEventListener("DOMContentLoaded", async () => {
         status.textContent = `⚠️ Ошибка создания: ${result.error || "Неизвестно"}`;
         return null;
       }
-    } else {
-      status.textContent = "✅ Пользователь найден!";
-      nameInput.value = user.name;
-      phoneInput.value = user.phone;
-      return user.id;
+    } catch (err) {
+      status.textContent = "❌ Ошибка проверки пользователя";
+      return null;
     }
-  } catch (err) {
-    status.textContent = "❌ Ошибка проверки пользователя";
-    return null;
   }
-}
-
 
   async function fetchAvailableDates() {
     try {
@@ -68,7 +70,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   async function loadBookings(userId) {
     records.innerHTML = "";
     try {
-      const res = await fetch(`${API_URL}/api/bookings/by-user/${userId}`);
+      const res = await fetch(`${API_URL}/api/bookings/by-user/${telegramId}`);
       const data = await res.json();
       if (!Array.isArray(data)) {
         records.textContent = `⚠️ ${data.error || "Ошибка загрузки"}`;
@@ -122,7 +124,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     defaultDate: new Date()
   });
 
-  // Заполняем фиксированные слоты
   const defaultTimes = ["10:00", "11:00", "12:00", "14:00", "15:00", "16:00"];
   defaultTimes.forEach(t => {
     const option = document.createElement("option");
@@ -131,9 +132,9 @@ window.addEventListener("DOMContentLoaded", async () => {
     timeSelect.appendChild(option);
   });
 
-  if (userId) {
-    await ensureUserExists(userId, nameInput.value, phoneInput.value);
-    loadBookings(userId);
+  if (telegramId) {
+    userId = await ensureUserExists(telegramId, nameInput.value, phoneInput.value);
+    if (userId) loadBookings(userId);
   } else {
     status.textContent = "⚠️ Не удалось определить пользователя";
   }
