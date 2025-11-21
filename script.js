@@ -22,48 +22,60 @@ window.addEventListener("DOMContentLoaded", async () => {
   let userId = null;
 
   async function ensureUserExists(telegramId, name, phone) {
-    if (!telegramId) {
-      status.textContent = "⚠️ Не передан Telegram ID";
-      return null;
-    }
-
-    status.textContent = "⏳ Проверка пользователя...";
-    try {
-      const res = await fetch(`${API_URL}/api/users?telegram_id=${telegramId}`);
-      const users = await res.json();
-      if (Array.isArray(users) && users.length > 0) {
-        const user = users[0];
-        status.textContent = "✅ Пользователь найден!";
-        nameInput.value = user.name;
-        phoneInput.value = user.phone;
-        return user.id;
-      }
-
-      const createRes = await fetch(`${API_URL}/api/users`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          telegram_id: telegramId,
-          name: name || "Без имени",
-          phone: phone || "00000000",
-          role: "user"
-        })
-      });
-      const result = await createRes.json();
-      if (createRes.ok && result.id) {
-        status.textContent = "✅ Пользователь создан!";
-        nameInput.value = result.name;
-        phoneInput.value = result.phone;
-        return result.id;
-      } else {
-        status.textContent = `⚠️ Ошибка создания: ${result.error || "Неизвестно"}`;
-        return null;
-      }
-    } catch {
-      status.textContent = "❌ Ошибка соединения с API";
-      return null;
-    }
+  if (!telegramId) {
+    status.textContent = "⚠️ Не передан Telegram ID";
+    return null;
   }
+
+  status.textContent = "⏳ Проверка пользователя...";
+  try {
+    const res = await fetch(`${API_URL}/api/users?telegram_id=${telegramId}`);
+    const users = await res.json();
+    if (Array.isArray(users) && users.length > 0) {
+      const user = users[0];
+      status.textContent = "✅ Пользователь найден!";
+      nameInput.value = user.name;
+      phoneInput.value = user.phone;
+
+      // ✅ Включаем админку, если роль admin
+      if (user.role === "admin") {
+        const adminPanel = document.getElementById("adminPanel");
+        if (adminPanel) {
+          adminPanel.style.display = "block";
+          status.textContent = "🛠 Админка активирована!";
+        }
+      }
+
+      return user.id;
+    }
+
+    // создание нового пользователя...
+    const createRes = await fetch(`${API_URL}/api/users`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        telegram_id: telegramId,
+        name: name || "Без имени",
+        phone: phone || "00000000",
+        role: "user"
+      })
+    });
+    const result = await createRes.json();
+    if (createRes.ok && result.id) {
+      status.textContent = "✅ Пользователь создан!";
+      nameInput.value = result.name;
+      phoneInput.value = result.phone;
+      return result.id;
+    } else {
+      status.textContent = `⚠️ Ошибка создания: ${result.error || "Неизвестно"}`;
+      return null;
+    }
+  } catch {
+    status.textContent = "❌ Ошибка соединения с API";
+    return null;
+  }
+}
+
 
   async function fetchAvailableDates() {
     try {
