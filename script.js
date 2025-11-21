@@ -97,32 +97,37 @@ window.addEventListener("DOMContentLoaded", async () => {
   }
 
   async function loadAvailableTimes(date) {
-    timeSelect.innerHTML = "";
-    try {
-      const res = await fetch(`${API_URL}/api/bookings/by-user/1000`);
-      const allSlots = await res.json();
-      const filtered = allSlots.filter(slot => slot.date === date);
-      if (filtered.length === 0) {
-        const option = document.createElement("option");
-        option.textContent = "Нет доступных слотов";
-        option.disabled = true;
-        timeSelect.appendChild(option);
-        return;
-      }
+  timeSelect.innerHTML = "";
 
-      filtered.forEach(slot => {
-        const option = document.createElement("option");
-        option.value = slot.time;
-        option.textContent = slot.time;
-        timeSelect.appendChild(option);
-      });
-    } catch {
+  try {
+    const res = await fetch(`${API_URL}/api/bookings/by-user/1000`);
+    const allSlots = await res.json();
+
+    // Показываем только слоты на выбранную дату, которые всё ещё принадлежат админу
+    const filtered = allSlots.filter(slot => slot.date === date && slot.user_id === 6);
+
+    if (filtered.length === 0) {
       const option = document.createElement("option");
-      option.textContent = "Ошибка загрузки слотов";
+      option.textContent = "Нет доступных слотов";
       option.disabled = true;
       timeSelect.appendChild(option);
+      return;
     }
+
+    filtered.forEach(slot => {
+      const option = document.createElement("option");
+      option.value = slot.time;
+      option.textContent = slot.time;
+      timeSelect.appendChild(option);
+    });
+  } catch {
+    const option = document.createElement("option");
+    option.textContent = "Ошибка загрузки слотов";
+    option.disabled = true;
+    timeSelect.appendChild(option);
   }
+}
+
 
   submitBtn.onclick = async () => {
     const payload = {
