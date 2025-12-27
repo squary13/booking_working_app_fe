@@ -5,27 +5,27 @@
   <title>Запись на прием</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Flatpickr -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
-  <!-- Твой стиль -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <div class="container">
 
-    <!-- 🌐 Выбор языка (только для пользователей) -->
+    <!-- 🌐 Выбор языка -->
     <select id="langSelect" style="margin-bottom: 15px; width: 100%; padding: 10px;">
       <option value="ru">Русский</option>
       <option value="lv">Latviešu</option>
       <option value="en">English</option>
     </select>
 
-    <!-- Приветствие -->
+    <!-- 🔐 Кнопка админки (по умолчанию скрыта) -->
+    <button id="adminBtn" style="display:none; margin-bottom: 15px;">
+      🛠 Админка
+    </button>
+
     <h2 id="welcomeText">👋 Привет, Гость!</h2>
 
-    <!-- Форма записи -->
     <form id="bookingForm">
 
       <label id="dateLabel" for="date">Дата</label>
@@ -49,32 +49,6 @@
     <button type="button" id="refreshBtn">🔄 Обновить записи</button>
   </div>
 
-  <!-- Админ-панель (только для админа, язык фиксирован — русский) -->
-  <div id="adminPanel" class="admin-panel" style="display: none;">
-    <h3>🛠 Панель администратора</h3>
-
-    <section>
-      <h4>📅 Рабочие дни</h4>
-      <label for="workDaysPicker">Выберите рабочие дни:</label>
-      <input type="text" id="workDaysPicker" placeholder="Выберите даты">
-      <button id="saveWorkDaysBtn">💾 Сохранить рабочие дни</button>
-    </section>
-
-    <section>
-      <h4>🧩 Генерация слотов</h4>
-      <label for="slotDatePicker">Дата для генерации слотов:</label>
-      <input type="text" id="slotDatePicker" placeholder="Выберите дату">
-      <button id="generateSlotsBtn">⚙️ Создать слоты</button>
-    </section>
-
-    <section>
-      <h4>📘 Записи на сегодня</h4>
-      <button id="refreshAdminRecordsBtn">🔄 Обновить записи</button>
-      <div id="adminRecords">ℹ️ Записи не загружены</div>
-    </section>
-  </div>
-
-  <!-- Скрипты -->
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="script.js"></script>
 </body>

@@ -104,10 +104,10 @@ function applyLang() {
   document.getElementById("welcomeText").textContent =
     LANG[currentLang].welcome(nameInput.value);
 
-  document.querySelector("label[for='date']").textContent = LANG[currentLang].date;
-  document.querySelector("label[for='timeSelect']").textContent = LANG[currentLang].time;
-  document.querySelector("label[for='nameInput']").textContent = LANG[currentLang].name;
-  document.querySelector("label[for='phoneInput']").textContent = LANG[currentLang].phone;
+  document.getElementById("dateLabel").textContent = LANG[currentLang].date;
+  document.getElementById("timeLabel").textContent = LANG[currentLang].time;
+  document.getElementById("nameLabel").textContent = LANG[currentLang].name;
+  document.getElementById("phoneLabel").textContent = LANG[currentLang].phone;
 
   submitBtn.textContent = LANG[currentLang].submit;
 }
@@ -124,6 +124,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   const records = document.getElementById("records");
   const refreshBtn = document.getElementById("refreshBtn");
   const submitBtn = document.getElementById("submitBtn");
+  const adminBtn = document.getElementById("adminBtn");
 
   /* === ЯЗЫК === */
   const langSelect = document.getElementById("langSelect");
@@ -171,8 +172,9 @@ window.addEventListener("DOMContentLoaded", async () => {
         nameInput.value = user.name;
         phoneInput.value = user.phone;
 
+        /* === Показываем кнопку админки === */
         if (user.role === "admin") {
-          document.getElementById("adminPanel").style.display = "block";
+          adminBtn.style.display = "block";
         }
 
         return user.id;
@@ -184,7 +186,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         body: JSON.stringify({
           telegram_id: telegramId,
           name: name || "Без имени",
-          phone: phone || "",
+          phone: phone || "00000000",
           role: "user"
         })
       });
@@ -204,6 +206,11 @@ window.addEventListener("DOMContentLoaded", async () => {
       return null;
     }
   }
+
+  /* === Кнопка админки === */
+  adminBtn.onclick = () => {
+    window.location.href = "admin.html";
+  };
 
   /* === Доступные даты === */
   async function fetchAvailableDates() {
