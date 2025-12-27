@@ -148,3 +148,32 @@ input[type="text"]::placeholder {
     padding: 3px 6px;
   }
 }
+
+input[type="date"] {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: #1e1e1e;
+  color: #fff;
+  border: 1px solid #666;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 16px;
+  position: relative;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="date"]:hover {
+  border-color: #888;
+}
+
+input[type="date"]:focus {
+  border-color: #ffd700;
+  box-shadow: 0 0 6px rgba(255, 215, 0, 0.4);
+  outline: none;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(80%) sepia(80%) saturate(500%) hue-rotate(10deg);
+  cursor: pointer;
+}
+
