@@ -5,11 +5,16 @@ window.addEventListener("DOMContentLoaded", async () => {
   const status = document.getElementById("status");
   const generateBtn = document.getElementById("generateSlots");
 
+  // -----------------------------
+  // Загрузка пользователей
+  // -----------------------------
   async function loadUsers() {
     status.textContent = "⏳ Загружаем пользователей...";
+
     try {
       const res = await fetch(`${API_URL}/api/users`);
       const users = await res.json();
+
       if (!Array.isArray(users)) {
         status.textContent = `⚠️ ${users.error || "Ошибка загрузки"}`;
         return;
@@ -30,10 +35,10 @@ window.addEventListener("DOMContentLoaded", async () => {
         const row = document.createElement("tr");
         row.innerHTML = `
           <td>${u.id}</td>
-          <td>${u.telegram_id}</td>
+          <td>${u.telegram_id || "-"}</td>
           <td>${u.name}</td>
-          <td>${u.phone}</td>
-          <td>${u.role}</td>
+          <td>${u.phone || "-"}</td>
+          <td>${u.role || "-"}</td>
           <td>${u.created_at}</td>
         `;
         userTable.appendChild(row);
@@ -45,13 +50,29 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  // -----------------------------
+  // Генерация слотов
+  // -----------------------------
   generateBtn.onclick = async () => {
+    const dateInput = document.getElementById("slotDate");
+    const selectedDate = dateInput.value;
+
+    if (!selectedDate) {
+      status.textContent = "⚠️ Выберите дату для генерации слотов";
+      return;
+    }
+
     status.textContent = "⏳ Генерация слотов...";
+
     try {
       const res = await fetch(`${API_URL}/api/generate-slots`, {
-        method: "POST"
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date: selectedDate })
       });
+
       const result = await res.json();
+
       if (result.ok) {
         status.textContent = `✅ Сгенерировано ${result.generated} слотов`;
       } else {
@@ -62,5 +83,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
+  // Загружаем пользователей при старте
   loadUsers();
 });

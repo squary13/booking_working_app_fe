@@ -8,46 +8,73 @@
       font-family: sans-serif;
       background: #f4f4f4;
       padding: 20px;
-      max-width: 800px;
+      max-width: 900px;
       margin: auto;
     }
     h1 {
-      font-size: 24px;
-      margin-bottom: 10px;
+      font-size: 26px;
+      margin-bottom: 20px;
     }
     #status {
-      margin: 10px 0;
+      margin: 10px 0 20px 0;
       font-weight: bold;
     }
-    #userList {
-      margin-top: 20px;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
     }
-    .user-card {
-      background: white;
+    th, td {
       border: 1px solid #ccc;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 5px;
+      padding: 8px;
+      background: white;
+    }
+    th {
+      background: #eee;
     }
     button {
       padding: 8px 12px;
-      margin-top: 10px;
       cursor: pointer;
       background: #007bff;
       color: white;
       border: none;
       border-radius: 4px;
+      margin-top: 10px;
     }
     button:hover {
       background: #0056b3;
     }
+    .block {
+      background: white;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+    }
   </style>
 </head>
 <body>
+
   <h1>👨‍💼 Панель администратора</h1>
-  <div id="status">⏳ Загрузка пользователей...</div>
-  <button id="generateSlots">📅 Сгенерировать слоты на месяц</button>
-  <div id="userList"></div>
+
+  <div id="status">⏳ Загрузка...</div>
+
+  <!-- Генерация слотов -->
+  <div class="block">
+    <h2>📅 Генерация слотов</h2>
+
+    <label for="slotDate">Дата для генерации:</label><br>
+    <input type="date" id="slotDate" />
+
+    <br>
+    <button id="generateSlots">Создать слоты</button>
+  </div>
+
+  <!-- Список пользователей -->
+  <div class="block">
+    <h2>👥 Пользователи</h2>
+    <table id="userTable"></table>
+  </div>
 
   <script src="admin.js"></script>
 </body>
