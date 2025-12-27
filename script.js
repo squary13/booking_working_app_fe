@@ -80,6 +80,26 @@ const LANG = {
 
 let currentLang = localStorage.getItem("lang") || "ru";
 
+/* ============================
+   Telegram WebApp ID
+============================ */
+function getTelegramUser() {
+  try {
+    if (window.Telegram && Telegram.WebApp) {
+      const tg = Telegram.WebApp;
+      return {
+        id: tg.initDataUnsafe?.user?.id || null,
+        name: tg.initDataUnsafe?.user?.first_name || ""
+      };
+    }
+  } catch (e) {}
+
+  return { id: null, name: "" };
+}
+
+/* ============================
+   Применение языка
+============================ */
 function applyLang() {
   document.getElementById("welcomeText").textContent =
     LANG[currentLang].welcome(nameInput.value);
@@ -115,19 +135,23 @@ window.addEventListener("DOMContentLoaded", async () => {
     applyLang();
   });
 
-  /* === ПАРСИНГ ПАРАМЕТРОВ === */
-  const urlParams = new URLSearchParams(window.location.search);
-  const name = decodeURIComponent(urlParams.get("name") || "");
-  const telegramIdRaw = urlParams.get("user_id");
-  const telegramId = telegramIdRaw && /^\d+$/.test(telegramIdRaw) ? parseInt(telegramIdRaw, 10) : null;
+  /* === Telegram WebApp === */
+  let { id: telegramId, name } = getTelegramUser();
+
+  /* === Fallback через URL === */
+  if (!telegramId) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const raw = urlParams.get("user_id");
+    telegramId = raw && /^\d+$/.test(raw) ? parseInt(raw, 10) : null;
+    name = decodeURIComponent(urlParams.get("name") || "");
+  }
 
   nameInput.value = name;
-
   applyLang();
 
   let userId = null;
 
-  /* === ПРОВЕРКА ИЛИ СОЗДАНИЕ ПОЛЬЗОВАТЕЛЯ === */
+  /* === Проверка или создание пользователя === */
   async function ensureUserExists(telegramId, name, phone) {
     if (!telegramId) {
       status.textContent = LANG[currentLang].unknownUser;
@@ -160,7 +184,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         body: JSON.stringify({
           telegram_id: telegramId,
           name: name || "Без имени",
-          phone: phone || "00000000",
+          phone: phone || "",
           role: "user"
         })
       });
@@ -181,7 +205,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  /* === ЗАГРУЗКА ДАТ === */
+  /* === Доступные даты === */
   async function fetchAvailableDates() {
     try {
       const res = await fetch(`${API_URL}/api/available-dates`);
@@ -192,7 +216,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  /* === ЗАГРУЗКА ЗАПИСЕЙ === */
+  /* === Загрузка записей === */
   async function loadBookings(telegramId) {
     records.innerHTML = "";
 
@@ -242,7 +266,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  /* === ЗАГРУЗКА СВОБОДНЫХ СЛОТОВ === */
+  /* === Свободные слоты === */
   async function loadAvailableTimes(date) {
     timeSelect.innerHTML = "";
 
@@ -275,7 +299,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  /* === ОТПРАВКА ЗАПИСИ === */
+  /* === Отправка записи === */
   submitBtn.onclick = async () => {
     const payload = {
       user_id: userId,
@@ -315,7 +339,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     submitBtn.textContent = LANG[currentLang].submit;
   };
 
-  /* === ИНИЦИАЛИЗАЦИЯ === */
+  /* === Инициализация === */
   const availableDates = await fetchAvailableDates();
 
   flatpickr("#date", {
