@@ -4,10 +4,9 @@
   <meta charset="UTF-8" />
   <title>Админка BookingAPP</title>
 
-  <!-- Подключаем твой тёмный CSS -->
-  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="style.css">
 
-  <!-- Flatpickr (красивый календарь) -->
+  <!-- Flatpickr -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
@@ -30,21 +29,25 @@
       <button id="generateSlots">Создать слоты</button>
     </section>
 
+    <!-- Удаление всех записей -->
+    <section>
+      <h4>🗑 Удаление всех записей</h4>
+      <button id="deleteAllBtn" style="background-color:#7a2e2e;">🗑 Удалить все записи</button>
+    </section>
+
     <!-- Список пользователей -->
     <section>
       <h4>👥 Пользователи</h4>
       <table id="userTable"></table>
     </section>
-  </div>
 
-  <script>
-    // Инициализация flatpickr
-    flatpickr("#slotDate", {
-      dateFormat: "Y-m-d",
-      locale: "ru",
-      allowInput: true
-    });
-  </script>
+    <!-- Записи на сегодня -->
+    <section>
+      <h4>📘 Записи на сегодня</h4>
+      <button id="refreshAdminRecordsBtn">🔄 Обновить записи</button>
+      <div id="adminRecords">ℹ️ Записи не загружены</div>
+    </section>
+  </div>
 
   <script src="admin.js"></script>
 </body>
