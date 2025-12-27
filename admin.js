@@ -1,15 +1,24 @@
 const API_URL = "https://booking-worker-py-be.squary50.workers.dev";
 
 window.addEventListener("DOMContentLoaded", async () => {
-  const userTable = document.getElementById("userTable");
   const status = document.getElementById("status");
+  const userTable = document.getElementById("userTable");
+  const adminRecords = document.getElementById("adminRecords");
+
   const generateBtn = document.getElementById("generateSlots");
   const deleteAllBtn = document.getElementById("deleteAllBtn");
   const refreshAdminRecordsBtn = document.getElementById("refreshAdminRecordsBtn");
-  const adminRecords = document.getElementById("adminRecords");
+  const backToUserBtn = document.getElementById("backToUserBtn");
 
   /* ============================
-     Загрузка пользователей
+     🔙 Кнопка возврата
+  ============================ */
+  backToUserBtn.onclick = () => {
+    window.location.href = "index.html";
+  };
+
+  /* ============================
+     👥 Загрузка пользователей
   ============================ */
   async function loadUsers() {
     status.textContent = "⏳ Загружаем пользователей...";
@@ -48,20 +57,19 @@ window.addEventListener("DOMContentLoaded", async () => {
       });
 
       status.textContent = `✅ Загружено ${users.length} пользователей`;
-    } catch (err) {
+    } catch {
       status.textContent = "❌ Ошибка соединения с API";
     }
   }
 
   /* ============================
-     Генерация слотов
+     ⚙️ Генерация слотов
   ============================ */
   generateBtn.onclick = async () => {
-    const dateInput = document.getElementById("slotDate");
-    const selectedDate = dateInput.value;
+    const date = document.getElementById("slotDate").value;
 
-    if (!selectedDate) {
-      status.textContent = "⚠️ Выберите дату для генерации слотов";
+    if (!date) {
+      status.textContent = "⚠️ Выберите дату";
       return;
     }
 
@@ -71,7 +79,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       const res = await fetch(`${API_URL}/api/generate-slots`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ date: selectedDate })
+        body: JSON.stringify({ date })
       });
 
       const result = await res.json();
@@ -87,7 +95,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   };
 
   /* ============================
-     Удаление всех записей
+     🗑 Удаление всех записей
   ============================ */
   deleteAllBtn.onclick = async () => {
     if (!confirm("Вы уверены, что хотите удалить ВСЕ записи?")) return;
@@ -117,7 +125,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   };
 
   /* ============================
-     Загрузка записей на сегодня
+     📘 Записи на сегодня
   ============================ */
   refreshAdminRecordsBtn.onclick = async () => {
     adminRecords.textContent = "⏳ Загружаем...";
@@ -141,7 +149,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   };
 
   /* ============================
-     Инициализация
+     🚀 Инициализация
   ============================ */
   loadUsers();
 });

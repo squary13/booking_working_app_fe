@@ -6,6 +6,7 @@
 
   <link rel="stylesheet" href="style.css">
 
+  <!-- Flatpickr -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
@@ -16,25 +17,36 @@
   <div class="admin-panel">
     <h3>👨‍💼 Панель администратора</h3>
 
+    <!-- 🔙 Кнопка возврата -->
+    <button id="backToUserBtn" style="margin-bottom: 15px;">
+      ⬅️ Назад в меню пользователя
+    </button>
+
     <div id="status">⏳ Загрузка...</div>
 
+    <!-- Генерация слотов -->
     <section>
       <h4>📅 Генерация слотов</h4>
+
       <label for="slotDate">Дата для генерации:</label>
       <input type="date" id="slotDate" />
+
       <button id="generateSlots">Создать слоты</button>
     </section>
 
+    <!-- Удаление всех записей -->
     <section>
       <h4>🗑 Удаление всех записей</h4>
       <button id="deleteAllBtn" style="background-color:#7a2e2e;">🗑 Удалить все записи</button>
     </section>
 
+    <!-- Список пользователей -->
     <section>
       <h4>👥 Пользователи</h4>
       <table id="userTable"></table>
     </section>
 
+    <!-- Записи на сегодня -->
     <section>
       <h4>📘 Записи на сегодня</h4>
       <button id="refreshAdminRecordsBtn">🔄 Обновить записи</button>
