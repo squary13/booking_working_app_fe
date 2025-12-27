@@ -4,24 +4,40 @@
   <meta charset="UTF-8">
   <title>Запись на прием</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Flatpickr -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+  <!-- Твой стиль -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
   <div class="container">
+
+    <!-- 🌐 Выбор языка (только для пользователей) -->
+    <select id="langSelect" style="margin-bottom: 15px; width: 100%; padding: 10px;">
+      <option value="ru">Русский</option>
+      <option value="lv">Latviešu</option>
+      <option value="en">English</option>
+    </select>
+
+    <!-- Приветствие -->
     <h2 id="welcomeText">👋 Привет, Гость!</h2>
 
+    <!-- Форма записи -->
     <form id="bookingForm">
-      <label for="date">Дата</label>
+
+      <label id="dateLabel" for="date">Дата</label>
       <input type="text" id="date" required>
 
-      <label for="timeSelect">Время</label>
+      <label id="timeLabel" for="timeSelect">Время</label>
       <select id="timeSelect" required></select>
 
-      <label for="nameInput">Имя</label>
+      <label id="nameLabel" for="nameInput">Имя</label>
       <input type="text" id="nameInput" required>
 
-      <label for="phoneInput">Телефон</label>
+      <label id="phoneLabel" for="phoneInput">Телефон</label>
       <input type="tel" id="phoneInput" required>
 
       <button type="button" id="submitBtn">Записаться</button>
@@ -33,32 +49,32 @@
     <button type="button" id="refreshBtn">🔄 Обновить записи</button>
   </div>
 
-  <!-- Админ-панель (только для админа) -->
+  <!-- Админ-панель (только для админа, язык фиксирован — русский) -->
   <div id="adminPanel" class="admin-panel" style="display: none;">
-  <h3>🛠 Панель администратора</h3>
+    <h3>🛠 Панель администратора</h3>
 
-  <section>
-    <h4>📅 Рабочие дни</h4>
-    <label for="workDaysPicker">Выберите рабочие дни:</label>
-    <input type="text" id="workDaysPicker" placeholder="Выберите даты">
-    <button id="saveWorkDaysBtn">💾 Сохранить рабочие дни</button>
-  </section>
+    <section>
+      <h4>📅 Рабочие дни</h4>
+      <label for="workDaysPicker">Выберите рабочие дни:</label>
+      <input type="text" id="workDaysPicker" placeholder="Выберите даты">
+      <button id="saveWorkDaysBtn">💾 Сохранить рабочие дни</button>
+    </section>
 
-  <section>
-    <h4>🧩 Генерация слотов</h4>
-    <label for="slotDatePicker">Дата для генерации слотов:</label>
-    <input type="text" id="slotDatePicker" placeholder="Выберите дату">
-    <button id="generateSlotsBtn">⚙️ Создать слоты</button>
-  </section>
+    <section>
+      <h4>🧩 Генерация слотов</h4>
+      <label for="slotDatePicker">Дата для генерации слотов:</label>
+      <input type="text" id="slotDatePicker" placeholder="Выберите дату">
+      <button id="generateSlotsBtn">⚙️ Создать слоты</button>
+    </section>
 
-  <section>
-    <h4>📘 Записи на сегодня</h4>
-    <button id="refreshAdminRecordsBtn">🔄 Обновить записи</button>
-    <div id="adminRecords">ℹ️ Записи не загружены</div>
-  </section>
-</div>
+    <section>
+      <h4>📘 Записи на сегодня</h4>
+      <button id="refreshAdminRecordsBtn">🔄 Обновить записи</button>
+      <div id="adminRecords">ℹ️ Записи не загружены</div>
+    </section>
+  </div>
 
-
+  <!-- Скрипты -->
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="script.js"></script>
 </body>
